@@ -30,7 +30,6 @@ public class MyBot extends Bot {
 		new MyBot().readSystemInput();
 	}
 
-	Map<Tile, Path<Tile>> antsPath = new HashMap<Tile, Path<Tile>>();
 
 	Smell<Tile> smell = new Smell<Tile>();
 	private int round = 0;

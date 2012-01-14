@@ -486,6 +486,7 @@ public class Ants {
                 enemyAnts.add(tile);
             break;
 		default:
+			break;
         }
     }
 
