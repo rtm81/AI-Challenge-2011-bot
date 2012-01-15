@@ -1,29 +1,29 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
 
 
-public abstract class GetNextOnPath<T, U> {
+public abstract class GetNextOnPath<T extends Number & Comparable<T>, U, V> {
 
-	protected GetNextOnPathProblem<T, U> problem;
+	protected GetNextOnPathProblem<T, U, V> problem;
 
-	protected GetNextOnPath(GetNextOnPathProblem<T, U> problem) {
+	protected GetNextOnPath(GetNextOnPathProblem<T, U, V> problem) {
 		this.problem = problem;
 	}
 
-	public abstract U get(final Path<T> path, final T currentPosition);
+	public abstract V get(final Path<T, U> path, final U currentPosition);
 
-	protected boolean isNotLastPosition(final Path<T> path) {
+	protected boolean isNotLastPosition(final Path<T, U> path) {
 		return !isLastPosition(path);
 	}
 
-	private boolean isLastPosition(final Path<T> path) {
-		return path.getLength() == 0;
+	private boolean isLastPosition(final Path<T, U> path) {
+		return path.getLength().compareTo((T) Integer.valueOf(0)) == 0;
 	}
 
-	protected boolean isParentEqualsCurrentPosition(final T currentPosition,
-			final Path<T> path) {
+	protected boolean isParentEqualsCurrentPosition(final U currentPosition,
+			final Path<T, U> path) {
 		return path.getParent().getEnd().equals(currentPosition);
 	}
 }

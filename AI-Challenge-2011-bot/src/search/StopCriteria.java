@@ -1,13 +1,13 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
-public interface StopCriteria<T> {
+public interface StopCriteria<T extends Number & Comparable<T>, U> {
 
 	void init();
 
 	boolean isStop();
 	
-	boolean isStop(Path<T> path);
+	boolean isStop(Path<T, U> path);
 
 }

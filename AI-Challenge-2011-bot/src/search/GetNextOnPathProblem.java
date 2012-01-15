@@ -1,8 +1,8 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
-public interface GetNextOnPathProblem<T, U> {
+public interface GetNextOnPathProblem<T extends Number & Comparable<T>, U, V> {
 
-	public U getDirection(T current, Path<T> path);
+	public V getDirection(U current, Path<T, U> path);
 }

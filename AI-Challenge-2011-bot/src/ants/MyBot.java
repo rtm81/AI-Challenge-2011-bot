@@ -9,7 +9,7 @@ import java.util.Set;
 
 import search.DirectionEnd;
 import search.GetNextOnPath;
-import search.path.Path;
+import search.path.impl.Path;
 import strategie.Fight;
 import strategie.Smell;
 
@@ -31,14 +31,14 @@ public class MyBot extends Bot {
 	}
 
 
-	Smell<Tile> smell = new Smell<Tile>();
+	Smell<Integer, Tile> smell = new Smell<Integer, Tile>();
 	private int round = 0;
 
 	@Override
 	public void doTurn() {
 
-			Ants ants = getAnts();
-		GetNextOnPath<Tile, Aim> getNextOnPath = new DirectionEnd<Tile, Aim>(
+		Ants ants = getAnts();
+		GetNextOnPath<Integer, Tile, Aim> getNextOnPath = new DirectionEnd<Integer, Tile, Aim>(
 					new GetNextOnPathProblemAdapter(ants));
 			round++;
 
@@ -56,7 +56,7 @@ public class MyBot extends Bot {
 			getMyAntsCount(ants);
 			for (Tile myAnt : ants.getMyAnts()) {
 
-				Path<Tile> shortestPath = smell.getShortestPath(myAnt);
+			Path<Integer, Tile> shortestPath = smell.getShortestPath(myAnt);
 
 				if (shortestPath != null) {
 					Aim aim = getNextOnPath.get(shortestPath, myAnt);

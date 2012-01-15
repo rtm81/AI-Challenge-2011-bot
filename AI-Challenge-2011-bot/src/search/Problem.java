@@ -1,8 +1,8 @@
 package search;
 import java.util.Set;
 
-public interface Problem<T> {
+public interface Problem<U> {
 
-	public Set<T> getActions(T end);
+	public Set<U> getActions(U end);
 
 }

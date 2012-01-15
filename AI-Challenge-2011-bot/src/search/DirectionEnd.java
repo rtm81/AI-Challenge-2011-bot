@@ -1,21 +1,22 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
 
 
-public class DirectionEnd<T, U> extends GetNextOnPath<T, U> {
+public class DirectionEnd<T extends Number & Comparable<T>, U, V> extends
+		GetNextOnPath<T, U, V> {
 
-	public DirectionEnd(GetNextOnPathProblem<T, U> problem) {
+	public DirectionEnd(GetNextOnPathProblem<T, U, V> problem) {
 		super(problem);
 	}
 
 	@Override
-	public U get(Path<T> path, T currentPosition) {
-		for (Path<T> tempPath = path; isNotLastPosition(tempPath); tempPath = tempPath
+	public V get(Path<T, U> path, U currentPosition) {
+		for (Path<T, U> tempPath = path; isNotLastPosition(tempPath); tempPath = tempPath
 				.getParent()) {
 			if (isParentEqualsCurrentPosition(currentPosition, tempPath)) {
-				U result = problem.getDirection(currentPosition, tempPath);
+				V result = problem.getDirection(currentPosition, tempPath);
 				if (result != null)
 					return result;
 			}

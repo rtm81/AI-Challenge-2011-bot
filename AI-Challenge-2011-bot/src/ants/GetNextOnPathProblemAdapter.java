@@ -1,12 +1,11 @@
 package ants;
 import java.util.List;
 
-
 import search.GetNextOnPathProblem;
-import search.path.Path;
+import search.path.impl.Path;
 
 public class GetNextOnPathProblemAdapter implements
-		GetNextOnPathProblem<Tile, Aim> {
+		GetNextOnPathProblem<Integer, Tile, Aim> {
 
 	private final Ants ants;
 
@@ -15,7 +14,7 @@ public class GetNextOnPathProblemAdapter implements
 	}
 
 	@Override
-	public Aim getDirection(Tile current, Path<Tile> path) {
+	public Aim getDirection(Tile current, Path<Integer, Tile> path) {
 		List<Aim> directions = ants.getDirections(current, path.getEnd());
 		if (directions.size() > 0
 				&& ants.getIlk(current, directions.get(0)).isUnoccupied()) {

@@ -4,46 +4,46 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import search.path.Path;
+import search.path.impl.Path;
 
 
-public class BreadthFirstSearch<T> {
+public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 	
 	private final Set<T> goal;
-	private final Set<T> explored = new HashSet<T>();
-	private final PriorityQueue<Path<T>> frontier = new PriorityQueue<Path<T>>();
-	private final Problem<T> problem;
-	private final Set<BreadthFirstSearchListener<T>> breadthFirstSearchListeners = new HashSet<BreadthFirstSearchListener<T>>();
+	private final Set<U> explored = new HashSet<U>();
+	private final PriorityQueue<Path<T, U>> frontier = new PriorityQueue<Path<T, U>>();
+	private final Problem<U> problem;
+	private final Set<BreadthFirstSearchListener<T, U>> breadthFirstSearchListeners = new HashSet<BreadthFirstSearchListener<T, U>>();
 	
-	public BreadthFirstSearch(final Set<T> goal, final T initial,
-			final Problem<T> problem) {
+	public BreadthFirstSearch(final Set<T> goal, final U initial,
+			final Problem<U> problem) {
 		this.goal = goal;
-		this.frontier.offer(new Path<T>(null, initial));
+		this.frontier.offer(new Path<T, U>(null, initial));
 		this.problem = problem;
 	}
 	
-	public Path<T> search() {
-		return search(new NoStopCriteria<T>());
+	public Path<T, U> search() {
+		return search(new NoStopCriteria<T, U>());
 	}
 
-	public Path<T> search(StopCriteria<T> stopCriteria) {
+	public Path<T, U> search(StopCriteria<T, U> stopCriteria) {
 		stopCriteria.init();
 		
 		while (true) {
 			if (stopCriteria.isStop() || isFrontierEmpty()) {
 				break;
 			}
-			Path<T> path = removeChoice();
+			Path<T, U> path = removeChoice();
 			if (path == null || stopCriteria.isStop(path)) {
 				break;
 			}
-			T end = path.getEnd();
+			U end = path.getEnd();
 			addToExplored(end);
 			if (isGoal(end)) {
 				return path;
 			}
 			
-			for (T action : problem.getActions(end)) {
+			for (U action : problem.getActions(end)) {
 				addToFrontierUnlessNotAlreadyExplored(path, action);
 			}
 		}
@@ -52,32 +52,32 @@ public class BreadthFirstSearch<T> {
 	}
 
 	public void addListener(
-			BreadthFirstSearchListener<T> breadthFirstSearchListener) {
+			BreadthFirstSearchListener<T, U> breadthFirstSearchListener) {
 		breadthFirstSearchListeners.add(breadthFirstSearchListener);
 	}
 
 	public void removeListener(
-			BreadthFirstSearchListener<T> breadthFirstSearchListener) {
+			BreadthFirstSearchListener<T, U> breadthFirstSearchListener) {
 		breadthFirstSearchListeners.remove(breadthFirstSearchListener);
 	}
 
-	private void addToFrontierUnlessNotAlreadyExplored(Path<T> path, T action) {
+	private void addToFrontierUnlessNotAlreadyExplored(Path<T, U> path, U action) {
 		if (!(isInExplored(action) || isInFrontier(action))) {
-			Path<T> newPath = new Path<T>(path, action);
+			Path<T, U> newPath = new Path<T, U>(path, action);
 			frontier.offer(newPath);
 			// addToExplored(action);
-			for (BreadthFirstSearchListener<T> breadthFirstSearchListener : breadthFirstSearchListeners) {
+			for (BreadthFirstSearchListener<T, U> breadthFirstSearchListener : breadthFirstSearchListeners) {
 				breadthFirstSearchListener.addPathPerformed(newPath);
 			}
 		}
 	}
 
-	private boolean isInExplored(T action) {
+	private boolean isInExplored(U action) {
 		return explored.contains(action);
 	}
 
-	private boolean isInFrontier(T action) {
-		for (Path<T> path : frontier) {
+	private boolean isInFrontier(U action) {
+		for (Path<T, U> path : frontier) {
 			if (action.equals(path.getEnd()))
 				return true;
 		}
@@ -88,15 +88,15 @@ public class BreadthFirstSearch<T> {
 		return frontier.isEmpty();
 	}
 
-	private void addToExplored(T end) {
+	private void addToExplored(U end) {
 		explored.add(end);
 	}
 
-	private boolean isGoal(final T head) {
+	private boolean isGoal(final U head) {
 		return goal.contains(head);
 	}
 
-	private Path<T> removeChoice() {
+	private Path<T, U> removeChoice() {
 		return frontier.poll();
 	}
 }

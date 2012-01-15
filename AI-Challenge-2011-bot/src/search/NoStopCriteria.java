@@ -1,8 +1,9 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
-public class NoStopCriteria<T> implements StopCriteria<T> {
+public class NoStopCriteria<T extends Number & Comparable<T>, U> implements
+		StopCriteria<T, U> {
 
 	@Override
 	public void init() {
@@ -14,7 +15,7 @@ public class NoStopCriteria<T> implements StopCriteria<T> {
 	}
 
 	@Override
-	public boolean isStop(Path<T> path) {
+	public boolean isStop(Path<T, U> path) {
 		return false;
 	}
 }

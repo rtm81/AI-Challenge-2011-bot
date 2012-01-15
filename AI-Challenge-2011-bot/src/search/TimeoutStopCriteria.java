@@ -1,8 +1,9 @@
 package search;
 
-import search.path.Path;
+import search.path.impl.Path;
 
-public class TimeoutStopCriteria<T> implements StopCriteria<T> {
+public class TimeoutStopCriteria<T extends Number & Comparable<T>, U>
+		implements StopCriteria<T, U> {
 
 	private final long allowedSearchtime;
 	private long startTime;
@@ -27,7 +28,7 @@ public class TimeoutStopCriteria<T> implements StopCriteria<T> {
 	}
 
 	@Override
-	public boolean isStop(Path<T> path) {
+	public boolean isStop(Path<T, U> path) {
 		return false;
 	}
 }

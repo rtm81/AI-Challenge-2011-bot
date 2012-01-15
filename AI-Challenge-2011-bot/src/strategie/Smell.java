@@ -10,22 +10,22 @@ import search.BreadthFirstSearch;
 import search.BreadthFirstSearchListener;
 import search.Problem;
 import search.TimeoutStopCriteria;
-import search.path.Path;
 import search.path.PathHelper;
+import search.path.impl.Path;
 
-public class Smell<T> {
+public class Smell<T extends Number & Comparable<T>, U> {
 
-	private static class SearchResults<T> {
-		private final BreadthFirstSearch<T> search;
-		private final Map<T, Path<T>> paths = new HashMap<T, Path<T>>();
+	private static class SearchResults<T extends Number & Comparable<T>, U> {
+		private final BreadthFirstSearch<T, U> search;
+		private final Map<U, Path<T, U>> paths = new HashMap<U, Path<T, U>>();
 
-		public SearchResults(BreadthFirstSearch<T> search) {
+		public SearchResults(BreadthFirstSearch<T, U> search) {
 			this.search = search;
 
 			// search for adding entries to searchResult.paths
-			BreadthFirstSearchListener<T> breadthFirstSearchListener = new BreadthFirstSearchListener<T>() {
+			BreadthFirstSearchListener<T, U> breadthFirstSearchListener = new BreadthFirstSearchListener<T, U>() {
 				@Override
-				public void addPathPerformed(Path<T> path) {
+				public void addPathPerformed(Path<T, U> path) {
 					paths.put(path.getEnd(), path);
 				}
 			};
@@ -34,28 +34,28 @@ public class Smell<T> {
 
 	}
 
-	private final Map<T, SearchResults<T>> searches = new HashMap<T, SearchResults<T>>();
+	private final Map<U, SearchResults<T, U>> searches = new HashMap<U, SearchResults<T, U>>();
 
-	public void removeCachedEntriesIfNotExisting(Set<T> existing) {
-		Set<T> differenceSet = new HashSet<T>(searches.keySet());
+	public void removeCachedEntriesIfNotExisting(Set<U> existing) {
+		Set<U> differenceSet = new HashSet<U>(searches.keySet());
 		differenceSet.removeAll(existing);
-		for (T difference : differenceSet) {
+		for (U difference : differenceSet) {
 			searches.remove(difference);
 		}
 	}
 
-	public void createSmell(final Problem<T> problem, int searchTime,
-			T initial) {
-		final SearchResults<T> searchResults;
+	public void createSmell(final Problem<U> problem, int searchTime, U initial) {
+		final SearchResults<T, U> searchResults;
 		if (searches.containsKey(initial)) {
 			searchResults = searches.get(initial);
 		} else {
-			searchResults = new SearchResults<T>(new BreadthFirstSearch<T>(
+			searchResults = new SearchResults<T, U>(
+					new BreadthFirstSearch<T, U>(
 					Collections.<T> emptySet(), initial, problem));
 			searches.put(initial, searchResults);
 		}
 
-		searchResults.search.search(new TimeoutStopCriteria<T>(searchTime));
+		searchResults.search.search(new TimeoutStopCriteria<T, U>(searchTime));
 	}
 
 	/**
@@ -65,10 +65,10 @@ public class Smell<T> {
 	 * @param start
 	 * @return <code>null</code> means no path found
 	 */
-	public Path<T> getShortestPath(T start) {
-		Path<T> shortestPath = null;
-		for (SearchResults<T> entry : searches.values()) {
-			Path<T> path = entry.paths.get(start);
+	public Path<T, U> getShortestPath(U start) {
+		Path<T, U> shortestPath = null;
+		for (SearchResults<T, U> entry : searches.values()) {
+			Path<T, U> path = entry.paths.get(start);
 			if (path == null) {
 				continue;
 			}
@@ -82,11 +82,11 @@ public class Smell<T> {
 
 
 
-	private Path<T> pathFound(Path<T> shortestPath, Path<T> path) {
+	private Path<T, U> pathFound(Path<T, U> shortestPath, Path<T, U> path) {
 		if (shortestPath == null) {
 			return path;
 		}
-		if (path.getLength() < shortestPath.getLength()) {
+		if (path.getLength().compareTo(shortestPath.getLength()) < 0) {
 			return path;
 		}
 		return shortestPath;
