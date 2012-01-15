@@ -58,6 +58,7 @@ public class Path<T extends Number & Comparable<T>, U> implements
 	/**
 	 * Note: this class has a natural ordering that is inconsistent with equals.
 	 */
+	@Override
 	public int compareTo(search.path.Path<T, U> o) {
 		return (length < (Integer) o.getLength() ? -1 : (length == (Integer) o
 				.getLength() ? 0 : 1));

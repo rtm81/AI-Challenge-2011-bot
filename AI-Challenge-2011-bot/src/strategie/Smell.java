@@ -51,7 +51,8 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		} else {
 			searchResults = new SearchResults<T, U>(
 					new BreadthFirstSearch<T, U>(
-					Collections.<T> emptySet(), initial, problem));
+Collections.<U> emptySet(),
+							initial, problem));
 			searches.put(initial, searchResults);
 		}
 

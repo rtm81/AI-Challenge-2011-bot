@@ -9,13 +9,13 @@ import search.path.impl.Path;
 
 public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 	
-	private final Set<T> goal;
+	private final Set<U> goal;
 	private final Set<U> explored = new HashSet<U>();
 	private final PriorityQueue<Path<T, U>> frontier = new PriorityQueue<Path<T, U>>();
 	private final Problem<U> problem;
 	private final Set<BreadthFirstSearchListener<T, U>> breadthFirstSearchListeners = new HashSet<BreadthFirstSearchListener<T, U>>();
 	
-	public BreadthFirstSearch(final Set<T> goal, final U initial,
+	public BreadthFirstSearch(final Set<U> goal, final U initial,
 			final Problem<U> problem) {
 		this.goal = goal;
 		this.frontier.offer(new Path<T, U>(null, initial));
