@@ -9,7 +9,7 @@ import java.util.Set;
 
 import search.DirectionEnd;
 import search.GetNextOnPath;
-import search.Path;
+import search.path.Path;
 import strategie.Fight;
 import strategie.Smell;
 

@@ -8,10 +8,10 @@ import java.util.Set;
 
 import search.BreadthFirstSearch;
 import search.BreadthFirstSearchListener;
-import search.Path;
-import search.PathHelper;
 import search.Problem;
 import search.TimeoutStopCriteria;
+import search.path.Path;
+import search.path.PathHelper;
 
 public class Smell<T> {
 

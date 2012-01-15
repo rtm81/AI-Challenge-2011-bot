@@ -1,20 +1,24 @@
-package search;
+package search.path;
 
 public class Path<T> implements Comparable<Path<T>> {
 	private final Path<T> parent;
 	private final int length;
 	private final T end;
 
-	public Path(final Path<T> parent, final T end) {
+	public Path(final Path<T> parent, final T end, Integer number) {
 		if (end == null)
 			throw new NullPointerException("end may not be null");
 		this.parent = parent;
 		if (parent == null) {
 			length = 0;
 		} else {
-			length = parent.length + 1;
+			length = parent.length + number;
 		}
 		this.end = end;
+	}
+
+	public Path(final Path<T> parent, final T end) {
+		this(parent, end, Integer.valueOf(1));
 	}
 
 	public static <T> Path<T> create(final T... args) {

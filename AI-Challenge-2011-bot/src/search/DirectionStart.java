@@ -1,5 +1,7 @@
 package search;
 
+import search.path.Path;
+
 
 
 public class DirectionStart<T, U> extends GetNextOnPath<T, U> {

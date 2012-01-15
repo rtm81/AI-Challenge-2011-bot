@@ -3,7 +3,7 @@ import java.util.List;
 
 
 import search.GetNextOnPathProblem;
-import search.Path;
+import search.path.Path;
 
 public class GetNextOnPathProblemAdapter implements
 		GetNextOnPathProblem<Tile, Aim> {

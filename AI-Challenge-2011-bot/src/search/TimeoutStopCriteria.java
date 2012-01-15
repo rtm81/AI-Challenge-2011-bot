@@ -1,5 +1,7 @@
 package search;
 
+import search.path.Path;
+
 public class TimeoutStopCriteria<T> implements StopCriteria<T> {
 
 	private final long allowedSearchtime;

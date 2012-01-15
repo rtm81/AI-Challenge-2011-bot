@@ -1,5 +1,7 @@
 package search;
 
+import search.path.Path;
+
 
 
 public abstract class GetNextOnPath<T, U> {

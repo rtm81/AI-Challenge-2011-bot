@@ -1,5 +1,7 @@
 package search;
 
+import search.path.Path;
+
 public class NoStopCriteria<T> implements StopCriteria<T> {
 
 	@Override
