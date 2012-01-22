@@ -15,9 +15,6 @@ public class Fight {
 	public void fight(Ants ants, Map<Tile, Aim> plannedOrders, int round) {
 		for (Map.Entry<Tile, Aim> entry : plannedOrders.entrySet()) {
 			Tile myFightingAnt = entry.getKey();
-			// Aim direction = entry.getValue();
-			// Tile nextTile = ants.getTile(tile, direction);
-
 			fightDecision(ants, entry, myFightingAnt);
 		}
 	}
@@ -25,21 +22,14 @@ public class Fight {
 	private void fightDecision(Ants ants, Map.Entry<Tile, Aim> entry,
 			Tile myFightingAnt) {
 		Set<Tile> enemiesInRange = new HashSet<Tile>();
-		Tile nearestEnemy = null;
-		int nearestEnemyDistance = Integer.MAX_VALUE;
 		for (Tile enemy : ants.getEnemyAnts()) {
-			if (!isInRange(myFightingAnt, enemy, ants, 4)) {
-				continue;
-			}
-			enemiesInRange.add(enemy);
-			int distance = ants.getDistance(myFightingAnt, enemy);
-			if (distance < nearestEnemyDistance) {
-				nearestEnemyDistance = distance;
-				nearestEnemy = enemy;
+			if (isInRange(myFightingAnt, enemy, ants, 4)) {
+				enemiesInRange.add(enemy);
 			}
 		}
 		if (enemiesInRange.isEmpty())
 			return;
+		Tile nearestEnemy = ants.getNearest(myFightingAnt, enemiesInRange);
 		boolean isLosing = calcIsLosing(ants, enemiesInRange);
 		move(ants, entry, myFightingAnt, nearestEnemy,
 				isLosing);
@@ -68,9 +58,10 @@ public class Fight {
 		return isLosing;
 	}
 
-	private void move(Ants ants, Map.Entry<Tile, Aim> entry, Tile myFightingAnt,
- Tile nearestEnemy, boolean isLosing) {
-		final List<Aim> directions = ants.getDirections(myFightingAnt, nearestEnemy);
+	private void move(Ants ants, Map.Entry<Tile, Aim> entry,
+			Tile myFightingAnt, Tile nearestEnemy, boolean isLosing) {
+		final List<Aim> directions = ants.getDirections(myFightingAnt,
+				nearestEnemy);
 		if (isLosing) {
 			run(ants, entry, myFightingAnt, directions);
 		} else {
