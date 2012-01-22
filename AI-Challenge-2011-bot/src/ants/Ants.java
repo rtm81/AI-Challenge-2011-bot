@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Holds all game data and current game state.
  */
-public class Ants {
+public class Ants extends DistanceProvider<Tile> {
     /** Maximum map size. */
     public static final int MAX_MAP_SIZE = 256 * 2;
 
@@ -331,15 +331,11 @@ public class Ants {
         return visible[tile.getRow()][tile.getColumn()];
     }
 
-    /**
-     * Calculates distance between two locations on the game map.
-     * 
-     * @param t1 one location on the game map
-     * @param t2 another location on the game map
-     * 
-     * @return distance between <code>t1</code> and <code>t2</code>
-     */
-    public int getDistance(Tile t1, Tile t2) {
+    /* (non-Javadoc)
+	 * @see ants.DistanceProvider#getDistance(ants.Tile, ants.Tile)
+	 */
+    @Override
+	public int getDistance(Tile t1, Tile t2) {
         int rowDelta = Math.abs(t1.getRow() - t2.getRow());
         int colDelta = Math.abs(t1.getColumn() - t2.getColumn());
         rowDelta = Math.min(rowDelta, rows - rowDelta);

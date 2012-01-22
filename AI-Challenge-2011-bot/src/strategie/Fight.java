@@ -28,13 +28,14 @@ public class Fight {
 		Tile nearestEnemy = null;
 		int nearestEnemyDistance = Integer.MAX_VALUE;
 		for (Tile enemy : ants.getEnemyAnts()) {
-			if (isInRange(myFightingAnt, enemy, ants, 4)) {
-				enemiesInRange.add(enemy);
-				int distance = ants.getDistance(myFightingAnt, enemy);
-				if (distance < nearestEnemyDistance) {
-					nearestEnemyDistance = distance;
-					nearestEnemy = enemy;
-				}
+			if (!isInRange(myFightingAnt, enemy, ants, 4)) {
+				continue;
+			}
+			enemiesInRange.add(enemy);
+			int distance = ants.getDistance(myFightingAnt, enemy);
+			if (distance < nearestEnemyDistance) {
+				nearestEnemyDistance = distance;
+				nearestEnemy = enemy;
 			}
 		}
 		if (enemiesInRange.isEmpty())
