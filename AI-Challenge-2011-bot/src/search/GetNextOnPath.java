@@ -19,7 +19,7 @@ public abstract class GetNextOnPath<T extends Number & Comparable<T>, U, V> {
 	}
 
 	private boolean isLastPosition(final Path<T, U> path) {
-		return path.getLength().compareTo((T) Integer.valueOf(0)) == 0;
+		return path.getParent() == null;
 	}
 
 	protected boolean isParentEqualsCurrentPosition(final U currentPosition,
