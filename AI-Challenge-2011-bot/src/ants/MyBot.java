@@ -3,6 +3,7 @@ package ants;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,55 +43,50 @@ public class MyBot extends Bot {
 		Ants ants = getAnts();
 		GetNextOnPath<Integer, Tile, Aim> getNextOnPath = new DirectionEnd<Integer, Tile, Aim>(
 					new GetNextOnPathProblemAdapter(ants));
-			round++;
+		round++;
 
-			Map<Tile, Aim> plannedOrders = new HashMap<Tile, Aim>();
-			Set<Tile> foodTiles = ants.getFoodTiles();
-			int foodCount = foodTiles.size();
-			int searchTimePerFood = (int) ((ants.getTurnTime() * (0.5)) / foodCount) - 1;
+		Map<Tile, Aim> plannedOrders = new HashMap<Tile, Aim>();
+		Set<Tile> foodTiles = ants.getFoodTiles();
+		int foodCount = foodTiles.size();
+		int searchTimePerFood = (int) ((ants.getTurnTime() * (0.5)) / foodCount) - 1;
 
-			for (Tile food : foodTiles) {
-				smell.createSmell(new ProblemAdapter(ants), searchTimePerFood,
-						food);
-			}
-			smell.removeCachedEntriesIfNotExisting(foodTiles);
+		smell.createSmell(new ProblemAdapter(ants), foodTiles,
+				searchTimePerFood);
 
-			getMyAntsCount(ants);
-			for (Tile myAnt : ants.getMyAnts()) {
+		getMyAntsCount(ants);
+		List<Ant> antsList = new LinkedList<Ant>();
+		for (Tile myAnt : ants.getMyAnts()) {
+
+			Ant ant = new Ant(myAnt);
+			antsList.add(ant);
 
 			Path<Integer, Tile> shortestPath = smell.getShortestPath(myAnt);
 
-				if (shortestPath != null) {
-					Aim aim = getNextOnPath.get(shortestPath, myAnt);
-					if (aim != null) {
-						plannedOrders.put(myAnt, aim);
-						continue;
-					}
+			if (shortestPath != null) {
+				Aim aim = getNextOnPath.get(shortestPath, myAnt);
+				if (aim != null) {
+					ant.addOrder(Ant.OrderType.FOOD, aim);
+					plannedOrders.put(myAnt, aim);
+					continue;
 				}
+			}
 
-				/**
-				 * give random order if on own hill
-				 */
-				if (ants.getMyHills().contains(myAnt)) {
-					Aim randomAim = Aim.randomAim();
-					if (ants.getIlk(myAnt, randomAim).isUnoccupied()) {
-						plannedOrders.put(myAnt, randomAim);
-						continue;
-					}
+			/**
+			 * give random order if on own hill
+			 */
+			if (ants.getMyHills().contains(myAnt)) {
+				Aim randomAim = Aim.randomAim();
+				if (ants.getIlk(myAnt, randomAim).isUnoccupied()) {
+					ant.addOrder(Ant.OrderType.OWN_HILL, randomAim);
+					plannedOrders.put(myAnt, randomAim);
+					continue;
 				}
+			}
 
-				/**
-				 * move away from nearest own hill
-				 */
-				int nearestHillDistance = Integer.MAX_VALUE;
-				Tile nearestHillTile = null;
-				for (Tile hill : ants.getMyHills()) {
-					int distance = ants.getDistance(myAnt, hill);
-					if (distance < nearestHillDistance) {
-						nearestHillDistance = distance;
-						nearestHillTile = hill;
-					}
-				}
+			/**
+			 * move away from nearest own hill
+			 */
+			Tile nearestHillTile = getNearest(ants, myAnt);
 
 				if (nearestHillTile != null) {
 					List<Aim> directions = ants.getDirections(myAnt,
@@ -140,6 +136,10 @@ public class MyBot extends Bot {
 				occupied.add(nextTile);
 			}
 
+	}
+
+	private Tile getNearest(Ants ants, Tile myAnt) {
+		return ants.getNearest(myAnt, ants.getMyHills());
 	}
 
 	private int getMyAntsCount(Ants ants) {

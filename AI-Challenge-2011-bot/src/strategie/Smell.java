@@ -41,7 +41,15 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		this.pathBuilder = pathBuilder;
 	}
 
-	public void removeCachedEntriesIfNotExisting(Set<U> existing) {
+	public void createSmell(final Problem<U> problem, Set<U> sources,
+			int searchTimePerFood) {
+		for (U source : sources) {
+			this.createSmell(problem, searchTimePerFood, source);
+		}
+		this.removeCachedEntriesIfNotExisting(sources);
+	}
+
+	private void removeCachedEntriesIfNotExisting(Set<U> existing) {
 		Set<U> differenceSet = new HashSet<U>(searches.keySet());
 		differenceSet.removeAll(existing);
 		for (U difference : differenceSet) {
@@ -49,8 +57,7 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		}
 	}
 
-	public void createSmell(final Problem<U> problem, int searchTime,
- U initial) {
+	private void createSmell(final Problem<U> problem, int searchTime, U initial) {
 		final SearchResults<T, U> searchResults;
 		if (searches.containsKey(initial)) {
 			searchResults = searches.get(initial);
