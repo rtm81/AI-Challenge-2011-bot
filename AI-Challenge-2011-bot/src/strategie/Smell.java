@@ -8,10 +8,10 @@ import java.util.Set;
 
 import search.BreadthFirstSearch;
 import search.BreadthFirstSearchListener;
+import search.PathBuilder;
 import search.Problem;
 import search.TimeoutStopCriteria;
-import search.path.PathHelper;
-import search.path.impl.Path;
+import search.path.Path;
 
 public class Smell<T extends Number & Comparable<T>, U> {
 
@@ -19,7 +19,7 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		private final BreadthFirstSearch<T, U> search;
 		private final Map<U, Path<T, U>> paths = new HashMap<U, Path<T, U>>();
 
-		public SearchResults(BreadthFirstSearch<T, U> search) {
+		public SearchResults(final BreadthFirstSearch<T, U> search) {
 			this.search = search;
 
 			// search for adding entries to searchResult.paths
@@ -35,6 +35,11 @@ public class Smell<T extends Number & Comparable<T>, U> {
 	}
 
 	private final Map<U, SearchResults<T, U>> searches = new HashMap<U, SearchResults<T, U>>();
+	private final PathBuilder<T, U> pathBuilder;
+
+	public Smell(final PathBuilder<T, U> pathBuilder) {
+		this.pathBuilder = pathBuilder;
+	}
 
 	public void removeCachedEntriesIfNotExisting(Set<U> existing) {
 		Set<U> differenceSet = new HashSet<U>(searches.keySet());
@@ -44,15 +49,15 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		}
 	}
 
-	public void createSmell(final Problem<U> problem, int searchTime, U initial) {
+	public void createSmell(final Problem<U> problem, int searchTime,
+ U initial) {
 		final SearchResults<T, U> searchResults;
 		if (searches.containsKey(initial)) {
 			searchResults = searches.get(initial);
 		} else {
 			searchResults = new SearchResults<T, U>(
-					new BreadthFirstSearch<T, U>(
-Collections.<U> emptySet(),
-							initial, problem));
+					new BreadthFirstSearch<T, U>(Collections.<U> emptySet(),
+							initial, problem, pathBuilder));
 			searches.put(initial, searchResults);
 		}
 
@@ -76,12 +81,10 @@ Collections.<U> emptySet(),
 			shortestPath = pathFound(shortestPath, path);
 		}
 		if (shortestPath != null) {
-			shortestPath = PathHelper.invert(shortestPath);
+			shortestPath = pathBuilder.invert(shortestPath);
 		}
 		return shortestPath;
 	}
-
-
 
 	private Path<T, U> pathFound(Path<T, U> shortestPath, Path<T, U> path) {
 		if (shortestPath == null) {

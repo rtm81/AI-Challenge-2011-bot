@@ -2,7 +2,7 @@ package ants;
 import java.util.List;
 
 import search.GetNextOnPathProblem;
-import search.path.impl.Path;
+import search.path.Path;
 
 public class GetNextOnPathProblemAdapter implements
 		GetNextOnPathProblem<Integer, Tile, Aim> {

@@ -1,6 +1,7 @@
 package search;
 
-import search.path.impl.Path;
+import search.path.Path;
+
 
 
 

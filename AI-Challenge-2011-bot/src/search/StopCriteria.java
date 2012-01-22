@@ -1,6 +1,6 @@
 package search;
 
-import search.path.impl.Path;
+import search.path.Path;
 
 public interface StopCriteria<T extends Number & Comparable<T>, U> {
 

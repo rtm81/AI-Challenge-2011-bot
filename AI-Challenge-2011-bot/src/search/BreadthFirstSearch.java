@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import search.path.impl.Path;
+import search.path.Path;
+
 
 
 public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
@@ -16,9 +17,9 @@ public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 	private final Set<BreadthFirstSearchListener<T, U>> breadthFirstSearchListeners = new HashSet<BreadthFirstSearchListener<T, U>>();
 	
 	public BreadthFirstSearch(final Set<U> goal, final U initial,
-			final Problem<U> problem) {
+			final Problem<U> problem, final PathBuilder<T, U> pathBuilder) {
 		this.goal = goal;
-		this.frontier.offer(new Path<T, U>(null, initial));
+		this.frontier.offer(pathBuilder.create(initial));
 		this.problem = problem;
 	}
 	
@@ -63,7 +64,7 @@ public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 
 	private void addToFrontierUnlessNotAlreadyExplored(Path<T, U> path, U action) {
 		if (!(isInExplored(action) || isInFrontier(action))) {
-			Path<T, U> newPath = new Path<T, U>(path, action);
+			Path<T, U> newPath = path.create(action);
 			frontier.offer(newPath);
 			// addToExplored(action);
 			for (BreadthFirstSearchListener<T, U> breadthFirstSearchListener : breadthFirstSearchListeners) {

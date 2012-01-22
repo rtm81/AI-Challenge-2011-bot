@@ -1,8 +1,6 @@
 package search;
 
-import search.path.impl.Path;
-
-
+import search.path.Path;
 
 public class DirectionStart<T extends Number & Comparable<T>, U, V> extends
 		GetNextOnPath<T, U, V> {

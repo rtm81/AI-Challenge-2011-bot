@@ -1,13 +1,13 @@
 package search.path.impl;
 
+import search.path.Path;
 
-public class Path<T extends Number & Comparable<T>, U> implements
-		search.path.Path<T, U> {
-	private final Path<T, U> parent;
+public class IntPath<T extends Number & Comparable<T>, U> implements Path<T, U> {
+	private final IntPath<T, U> parent;
 	private final int length;
 	private final U end;
 
-	public Path(final Path<T, U> parent, final U end, int number) {
+	public IntPath(final IntPath<T, U> parent, final U end, int number) {
 		if (end == null)
 			throw new NullPointerException("end may not be null");
 		this.parent = parent;
@@ -19,15 +19,20 @@ public class Path<T extends Number & Comparable<T>, U> implements
 		this.end = end;
 	}
 
-	public Path(final Path<T, U> parent, final U end) {
+	public IntPath(final IntPath<T, U> parent, final U end) {
 		this(parent, end, 1);
 	}
 
-	public static <T extends Number & Comparable<T>, U> Path<T, U> create(
+	@Override
+	public Path<T, U> create(U end) {
+		return new IntPath<T, U>(this, end);
+	}
+
+	public static <T extends Number & Comparable<T>, U> IntPath<T, U> create(
 			final U... args) {
-		Path<T, U> path = null;
+		IntPath<T, U> path = null;
 		for (U arg : args) {
-			path = new Path<T, U>(path, arg);
+			path = new IntPath<T, U>(path, arg);
 		}
 		return path;
 	}
@@ -42,7 +47,8 @@ public class Path<T extends Number & Comparable<T>, U> implements
 		return end;
 	}
 
-	public Path<T, U> getParent() {
+	@Override
+	public IntPath<T, U> getParent() {
 		return parent;
 	}
 
@@ -86,7 +92,7 @@ public class Path<T extends Number & Comparable<T>, U> implements
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		Path<T, U> other = (Path<T, U>) obj;
+		IntPath<T, U> other = (IntPath<T, U>) obj;
 		if (end == null) {
 			if (other.end != null) {
 				return false;

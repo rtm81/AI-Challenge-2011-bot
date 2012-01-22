@@ -9,7 +9,8 @@ import java.util.Set;
 
 import search.DirectionEnd;
 import search.GetNextOnPath;
-import search.path.impl.Path;
+import search.PathBuilder;
+import search.path.Path;
 import strategie.Fight;
 import strategie.Smell;
 
@@ -31,7 +32,8 @@ public class MyBot extends Bot {
 	}
 
 
-	Smell<Integer, Tile> smell = new Smell<Integer, Tile>();
+	Smell<Integer, Tile> smell = new Smell<Integer, Tile>(
+			new PathBuilder<Integer, Tile>());
 	private int round = 0;
 
 	@Override
