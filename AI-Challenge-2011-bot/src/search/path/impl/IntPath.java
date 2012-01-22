@@ -28,18 +28,9 @@ public class IntPath<T extends Number & Comparable<T>, U> implements Path<T, U> 
 		return new IntPath<T, U>(this, end);
 	}
 
-	public static <T extends Number & Comparable<T>, U> IntPath<T, U> create(
-			final U... args) {
-		IntPath<T, U> path = null;
-		for (U arg : args) {
-			path = new IntPath<T, U>(path, arg);
-		}
-		return path;
-	}
-
 	@Override
 	public T getLength() {
-		return (T) (Integer) length;
+		return (T) Integer.valueOf(length);
 	}
 
 	@Override

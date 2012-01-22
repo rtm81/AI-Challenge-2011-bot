@@ -29,4 +29,13 @@ public class PathBuilder<T extends Number & Comparable<T>, U> {
 		}
 		return resultPath;
 	}
+
+	public IntPath<T, U> create(
+			final U... args) {
+		IntPath<T, U> path = null;
+		for (U arg : args) {
+			path = new IntPath<T, U>(path, arg);
+		}
+		return path;
+	}
 }
