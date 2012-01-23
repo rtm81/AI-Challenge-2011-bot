@@ -88,54 +88,55 @@ public class MyBot extends Bot {
 			 */
 			Tile nearestHillTile = getNearest(ants, myAnt);
 
-				if (nearestHillTile != null) {
-					List<Aim> directions = ants.getDirections(myAnt,
-							nearestHillTile);
-					if (directions.size() > 0) {
-						int largestDistance = Integer.MIN_VALUE;
-						Aim largestAim = null;
-						for (Aim aim : directions) {
-							Aim direction = aim.getOpposite();
-							if (ants.getIlk(myAnt, direction).isUnoccupied()) {
-								int distance = ants.getDistance(
-										nearestHillTile,
-										ants.getTile(myAnt, direction));
-								if (distance > largestDistance) {
-									largestDistance = distance;
-									largestAim = direction;
-								}
+			if (nearestHillTile != null) {
+				List<Aim> directions = ants.getDirections(myAnt,
+						nearestHillTile);
+				if (directions.size() > 0) {
+					int largestDistance = Integer.MIN_VALUE;
+					Aim largestAim = null;
+					for (Aim aim : directions) {
+						Aim direction = aim.getOpposite();
+						if (ants.getIlk(myAnt, direction).isUnoccupied()) {
+							int distance = ants.getDistance(nearestHillTile,
+									ants.getTile(myAnt, direction));
+							if (distance > largestDistance) {
+								largestDistance = distance;
+								largestAim = direction;
 							}
 						}
-						if (largestAim != null) {
-							plannedOrders.put(myAnt, largestAim);
-							continue;
-						}
 					}
-				}
-
-				// default: any unoccupied direction
-				for (Aim direction : Aim.values()) {
-					if (ants.getIlk(myAnt, direction).isUnoccupied()) {
-						plannedOrders.put(myAnt, direction);
+					if (largestAim != null) {
+						plannedOrders.put(myAnt, largestAim);
+						ant.addOrder(Ant.OrderType.MOVE_FROM_OWN_HILL,
+								largestAim);
 						continue;
 					}
 				}
 			}
-			new Fight().fight(ants, plannedOrders, round);
 
-			Set<Tile> occupied = new HashSet<Tile>();
-			for (Map.Entry<Tile, Aim> entry : plannedOrders.entrySet()) {
-				Tile tile = entry.getKey();
-				Aim direction = entry.getValue();
-				Tile nextTile = ants.getTile(tile, direction);
-				if (occupied.contains(nextTile)) {
-					// no action
-				} else {
-					ants.issueOrder(tile, direction);
+			// default: any unoccupied direction
+			for (Aim direction : Aim.values()) {
+				if (ants.getIlk(myAnt, direction).isUnoccupied()) {
+					plannedOrders.put(myAnt, direction);
+					ant.addOrder(Ant.OrderType.ANY_UNOCCUPIED, direction);
+					continue;
 				}
-				occupied.add(nextTile);
 			}
+		}
+		new Fight().fight(ants, plannedOrders, round);
 
+		Set<Tile> occupied = new HashSet<Tile>();
+		for (Map.Entry<Tile, Aim> entry : plannedOrders.entrySet()) {
+			Tile tile = entry.getKey();
+			Aim direction = entry.getValue();
+			Tile nextTile = ants.getTile(tile, direction);
+			if (occupied.contains(nextTile)) {
+				// no action
+			} else {
+				ants.issueOrder(tile, direction);
+			}
+			occupied.add(nextTile);
+		}
 	}
 
 	private Tile getNearest(Ants ants, Tile myAnt) {
