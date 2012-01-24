@@ -60,68 +60,15 @@ public class MyBot extends Bot {
 			Ant ant = new Ant(myAnt);
 			antsList.add(ant);
 
-			Path<Integer, Tile> shortestPath = smell.getShortestPath(myAnt);
-
-			if (shortestPath != null) {
-				Aim aim = getNextOnPath.get(shortestPath, myAnt);
-				if (aim != null) {
-					ant.addOrder(Ant.OrderType.FOOD, aim);
-					plannedOrders.put(myAnt, aim);
-					continue;
-				}
-			}
-
-			/**
-			 * give random order if on own hill
-			 */
-			if (ants.getMyHills().contains(myAnt)) {
-				Aim randomAim = Aim.randomAim();
-				if (ants.getIlk(myAnt, randomAim).isUnoccupied()) {
-					ant.addOrder(Ant.OrderType.OWN_HILL, randomAim);
-					plannedOrders.put(myAnt, randomAim);
-					continue;
-				}
-			}
-
-			/**
-			 * move away from nearest own hill
-			 */
-			Tile nearestHillTile = getNearest(ants, myAnt);
-
-			if (nearestHillTile != null) {
-				List<Aim> directions = ants.getDirections(myAnt,
-						nearestHillTile);
-				if (directions.size() > 0) {
-					int largestDistance = Integer.MIN_VALUE;
-					Aim largestAim = null;
-					for (Aim aim : directions) {
-						Aim direction = aim.getOpposite();
-						if (ants.getIlk(myAnt, direction).isUnoccupied()) {
-							int distance = ants.getDistance(nearestHillTile,
-									ants.getTile(myAnt, direction));
-							if (distance > largestDistance) {
-								largestDistance = distance;
-								largestAim = direction;
-							}
-						}
-					}
-					if (largestAim != null) {
-						plannedOrders.put(myAnt, largestAim);
-						ant.addOrder(Ant.OrderType.MOVE_FROM_OWN_HILL,
-								largestAim);
-						continue;
-					}
-				}
-			}
-
-			// default: any unoccupied direction
-			for (Aim direction : Aim.values()) {
-				if (ants.getIlk(myAnt, direction).isUnoccupied()) {
-					plannedOrders.put(myAnt, direction);
-					ant.addOrder(Ant.OrderType.ANY_UNOCCUPIED, direction);
-					continue;
-				}
-			}
+			moveToNearestFood(getNextOnPath, myAnt, ant);
+			moveRandomAtHill(ants, myAnt, ant);
+			moveAwayFromNearestHill(ants, myAnt, ant);
+			setAnyDirection(ants, ant);
+		}
+		for (Ant ant : antsList) {
+			Aim order = ant.getOrder();
+			if (order != null)
+				plannedOrders.put(ant.getTile(), order);
 		}
 		new Fight().fight(ants, plannedOrders, round);
 
@@ -136,6 +83,70 @@ public class MyBot extends Bot {
 				ants.issueOrder(tile, direction);
 			}
 			occupied.add(nextTile);
+		}
+	}
+
+	private void moveToNearestFood(
+			GetNextOnPath<Integer, Tile, Aim> getNextOnPath, Tile myAnt, Ant ant) {
+		Path<Integer, Tile> shortestPath = smell.getShortestPath(myAnt);
+
+		if (shortestPath != null) {
+			Aim aim = getNextOnPath.get(shortestPath, myAnt);
+			if (aim != null) {
+				ant.addOrder(Ant.OrderType.FOOD, aim);
+			}
+		}
+	}
+
+	private void moveRandomAtHill(Ants ants, Tile myAnt, Ant ant) {
+		/**
+		 * give random order if on own hill
+		 */
+		if (ants.getMyHills().contains(myAnt)) {
+			Aim randomAim = Aim.randomAim();
+			if (ants.getIlk(myAnt, randomAim).isUnoccupied()) {
+				ant.addOrder(Ant.OrderType.OWN_HILL, randomAim);
+			}
+		}
+	}
+
+	private void moveAwayFromNearestHill(Ants ants, Tile myAnt, Ant ant) {
+		/**
+		 * move away from nearest own hill
+		 */
+		Tile nearestHillTile = getNearest(ants, myAnt);
+
+		if (nearestHillTile != null) {
+			List<Aim> directions = ants.getDirections(myAnt,
+					nearestHillTile);
+			if (directions.size() > 0) {
+				int largestDistance = Integer.MIN_VALUE;
+				Aim largestAim = null;
+				for (Aim aim : directions) {
+					Aim direction = aim.getOpposite();
+					if (ants.getIlk(myAnt, direction).isUnoccupied()) {
+						int distance = ants.getDistance(nearestHillTile,
+								ants.getTile(myAnt, direction));
+						if (distance > largestDistance) {
+							largestDistance = distance;
+							largestAim = direction;
+						}
+					}
+				}
+				if (largestAim != null) {
+					ant.addOrder(Ant.OrderType.MOVE_FROM_OWN_HILL,
+							largestAim);
+				}
+			}
+		}
+	}
+
+	private void setAnyDirection(Ants ants, Ant ant) {
+		// default: any unoccupied direction
+		for (Aim direction : Aim.values()) {
+			if (ants.getIlk(ant.getTile(), direction).isUnoccupied()) {
+				ant.addOrder(Ant.OrderType.ANY_UNOCCUPIED, direction);
+			}
 		}
 	}
 
