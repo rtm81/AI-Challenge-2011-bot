@@ -1,6 +1,17 @@
 package search.path;
 
-
+/**
+ * A path for AI computation.
+ * 
+ * Comparable boils down to comparison of the length.
+ * 
+ * @author christopher.roscoe
+ * 
+ * @param <T>
+ *            the type of the length. Extends Number & Comparable<? super T>
+ * @param <U>
+ *            the type of any node.
+ */
 public interface Path<T extends Number & Comparable<? super T>, U> extends
 		Comparable<Path<T, U>> {
 

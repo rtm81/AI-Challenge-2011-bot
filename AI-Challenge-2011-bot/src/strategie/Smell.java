@@ -97,7 +97,7 @@ public class Smell<T extends Number & Comparable<T>, U> {
 		if (shortestPath == null) {
 			return path;
 		}
-		if (path.getLength().compareTo(shortestPath.getLength()) < 0) {
+		if (path.compareTo(shortestPath) < 0) {
 			return path;
 		}
 		return shortestPath;
