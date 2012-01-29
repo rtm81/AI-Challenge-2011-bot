@@ -2,7 +2,8 @@ package search.path.impl;
 
 import search.path.Path;
 
-public class IntPath<T extends Number & Comparable<T>, U> implements Path<T, U> {
+public class IntPath<T extends Number & Comparable<? super T>, U> implements
+		Path<T, U> {
 	private final IntPath<T, U> parent;
 	private final int length;
 	private final U end;
@@ -29,9 +30,14 @@ public class IntPath<T extends Number & Comparable<T>, U> implements Path<T, U> 
 	}
 
 	@Override
-	public T getLength() {
-		return (T) Integer.valueOf(length);
+	public <X extends Number> X getLength() {
+		return (X) Integer.valueOf(length);
 	}
+
+	// @Override
+	// public T getLength() {
+	// return
+	// }
 
 	@Override
 	public U getEnd() {
@@ -57,8 +63,12 @@ public class IntPath<T extends Number & Comparable<T>, U> implements Path<T, U> 
 	 */
 	@Override
 	public int compareTo(search.path.Path<T, U> o) {
-		return (length < (Integer) o.getLength() ? -1 : (length == (Integer) o
-				.getLength() ? 0 : 1));
+		if (!(o instanceof IntPath<?, ?>)) {
+			throw new IllegalArgumentException("Path [" + o
+					+ "] is not of type IntPath. Dont know how to compare.");
+		}
+		IntPath<?, ?> other = (IntPath<?, ?>) o;
+		return (length < other.length ? -1 : (length == other.length ? 0 : 1));
 	}
 
 	@Override
