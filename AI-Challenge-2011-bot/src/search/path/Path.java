@@ -17,10 +17,12 @@ public interface Path<T extends Number & Comparable<? super T>, U> extends
 
 	public abstract Path<T, U> create(U end);
 
-	public abstract <X extends Number> X getLength();
+	public abstract T getLength();
 
 	public abstract U getEnd();
 
 	public abstract Path<T, U> getParent();
+
+	public String stepsToString();
 
 }

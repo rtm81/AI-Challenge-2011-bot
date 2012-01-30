@@ -2,36 +2,36 @@ package search.path.impl;
 
 import search.path.Path;
 
-public class IntPath<T extends Number & Comparable<? super T>, U> implements
-		Path<T, U> {
-	private final IntPath<T, U> parent;
+public class IntPath<U> implements Path<Integer, U> {
+	private final Path<Integer, U> parent;
 	private final int length;
 	private final U end;
 
-	public IntPath(final IntPath<T, U> parent, final U end, int number) {
+	public IntPath(final Path<Integer, U> parent, final U end,
+			int number) {
 		if (end == null)
 			throw new NullPointerException("end may not be null");
 		this.parent = parent;
 		if (parent == null) {
 			length = 0;
 		} else {
-			length = parent.length + number;
+			length = parent.getLength() + number;
 		}
 		this.end = end;
 	}
 
-	public IntPath(final IntPath<T, U> parent, final U end) {
+	public IntPath(final Path<Integer, U> parent, final U end) {
 		this(parent, end, 1);
 	}
 
 	@Override
-	public Path<T, U> create(U end) {
-		return new IntPath<T, U>(this, end);
+	public Path<Integer, U> create(U end) {
+		return new IntPath<U>(this, end);
 	}
 
 	@Override
-	public <X extends Number> X getLength() {
-		return (X) Integer.valueOf(length);
+	public Integer getLength() {
+		return Integer.valueOf(length);
 	}
 
 	// @Override
@@ -45,7 +45,7 @@ public class IntPath<T extends Number & Comparable<? super T>, U> implements
 	}
 
 	@Override
-	public IntPath<T, U> getParent() {
+	public Path<Integer, U> getParent() {
 		return parent;
 	}
 
@@ -54,7 +54,8 @@ public class IntPath<T extends Number & Comparable<? super T>, U> implements
 		return "[" + stepsToString() + ", length=" + length + "]";
 	}
 
-	private String stepsToString() {
+	@Override
+	public String stepsToString() {
 		return "" + end + (parent == null ? "" : "<-" + parent.stepsToString());
 	}
 
@@ -62,15 +63,9 @@ public class IntPath<T extends Number & Comparable<? super T>, U> implements
 	 * Note: this class has a natural ordering that is inconsistent with equals.
 	 */
 	@Override
-	public int compareTo(search.path.Path<T, U> o) {
-		if (!(o instanceof IntPath<?, ?>)) {
-			throw new IllegalArgumentException("Path [" + o
-					+ "] is not of type IntPath. Dont know how to compare.");
-		}
-		IntPath<?, ?> other = (IntPath<?, ?>) o;
-		return (length < other.length ? -1 : (length == other.length ? 0 : 1));
+	public int compareTo(Path<Integer, U> o) {
+		return Integer.valueOf(length).compareTo(o.getLength());
 	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -93,7 +88,7 @@ public class IntPath<T extends Number & Comparable<? super T>, U> implements
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		IntPath<T, U> other = (IntPath<T, U>) obj;
+		IntPath<U> other = (IntPath<U>) obj;
 		if (end == null) {
 			if (other.end != null) {
 				return false;
@@ -113,5 +108,6 @@ public class IntPath<T extends Number & Comparable<? super T>, U> implements
 		}
 		return true;
 	}
+
 
 }
