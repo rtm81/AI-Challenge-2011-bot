@@ -60,10 +60,7 @@ public class MyBot extends Bot {
 			Ant ant = new Ant(myAnt);
 			antsList.add(ant);
 
-			moveToNearestFood(getNextOnPath, myAnt, ant);
-			moveRandomAtHill(ants, myAnt, ant);
-			moveAwayFromNearestHill(ants, myAnt, ant);
-			setAnyDirection(ants, ant);
+			processActions(ants, getNextOnPath, myAnt, ant);
 		}
 		for (Ant ant : antsList) {
 			Aim order = ant.getOrder();
@@ -72,17 +69,30 @@ public class MyBot extends Bot {
 		}
 		new Fight().fight(ants, plannedOrders, round);
 
+		issueOrders(ants, plannedOrders);
+	}
+
+	private void processActions(Ants ants,
+			GetNextOnPath<Integer, Tile, Aim> getNextOnPath, Tile myAnt, Ant ant) {
+		moveToNearestFood(getNextOnPath, myAnt, ant);
+		moveRandomAtHill(ants, myAnt, ant);
+		moveAwayFromNearestHill(ants, myAnt, ant);
+		setAnyDirection(ants, ant);
+	}
+
+	private void issueOrders(Ants ants, Map<Tile, Aim> plannedOrders) {
 		Set<Tile> occupied = new HashSet<Tile>();
-		for (Map.Entry<Tile, Aim> entry : plannedOrders.entrySet()) {
-			Tile tile = entry.getKey();
-			Aim direction = entry.getValue();
+		for (Map.Entry<Tile, Aim> plannedOrder : plannedOrders.entrySet()) {
+			Tile tile = plannedOrder.getKey();
+			Aim direction = plannedOrder.getValue();
 			Tile nextTile = ants.getTile(tile, direction);
 			if (occupied.contains(nextTile)) {
 				// no action
+				occupied.add(tile);
 			} else {
 				ants.issueOrder(tile, direction);
+				occupied.add(nextTile);
 			}
-			occupied.add(nextTile);
 		}
 	}
 
@@ -91,10 +101,16 @@ public class MyBot extends Bot {
 		Path<Integer, Tile> shortestPath = smell.getShortestPath(myAnt);
 
 		if (shortestPath != null) {
-			Aim aim = getNextOnPath.get(shortestPath, myAnt);
-			if (aim != null) {
-				ant.addOrder(Ant.OrderType.FOOD, aim);
-			}
+			moveToNearestFood(getNextOnPath, myAnt, ant, shortestPath);
+		}
+	}
+
+	private void moveToNearestFood(
+			GetNextOnPath<Integer, Tile, Aim> getNextOnPath, Tile myAnt,
+			Ant ant, Path<Integer, Tile> shortestPath) {
+		Aim aim = getNextOnPath.get(shortestPath, myAnt);
+		if (aim != null) {
+			ant.addOrder(Ant.OrderType.FOOD, aim);
 		}
 	}
 
@@ -158,4 +174,7 @@ public class MyBot extends Bot {
 		return ants.getMyAnts().size();
 	}
 
+	public int getRound() {
+		return this.round;
+	}
 }

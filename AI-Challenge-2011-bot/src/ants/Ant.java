@@ -45,4 +45,10 @@ public class Ant {
 		OrderType topPrio = OrderType.getTopPrio(orders.keySet());
 		return orders.get(topPrio);
 	}
+
+	@Override
+	public String toString() {
+		return "Ant [" + (tile != null ? "tile=" + tile : "") + "]";
+	}
+
 }
