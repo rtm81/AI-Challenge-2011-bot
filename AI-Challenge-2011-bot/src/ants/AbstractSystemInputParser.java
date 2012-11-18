@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 /**
  * Handles system input stream parsing.
  */
-public abstract class AbstractSystemInputParser extends AbstractSystemInputReader {
+public abstract class AbstractSystemInputParser extends
+		AbstractSystemInputReader {
     private static final String READY = "ready";
     
     private static final String GO = "go";

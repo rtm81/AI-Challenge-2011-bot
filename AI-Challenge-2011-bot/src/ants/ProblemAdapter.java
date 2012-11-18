@@ -18,13 +18,13 @@ public class ProblemAdapter implements Problem<Tile> {
 	}
 
 	@Override
-	public Set<Tile> getActions(Tile end) {
+	public Set<Tile> getActions(Tile tile) {
 		Set<Tile> result = new HashSet<Tile>();
 		for (Aim direction : Aim.values()) {
-			Ilk possibleStep = ants.getIlk(end, direction);
+			Ilk possibleStep = ants.getIlk(tile, direction);
 			if (possibleStep == null)
 				continue;
-			Tile newTile = ants.getTile(end, direction);
+			Tile newTile = ants.getTile(tile, direction);
 			if (newTile == null)
 				continue;
 			if (possibleStep.isPassable()) {

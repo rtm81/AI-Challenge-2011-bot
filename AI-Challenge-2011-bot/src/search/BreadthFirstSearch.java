@@ -7,7 +7,17 @@ import java.util.Set;
 import search.path.Path;
 
 
-
+/**
+ * 
+ * Not threadsafe!
+ * 
+ * @author christopher.roscoe
+ * 
+ * @param <T>
+ *            the type of the length of {@link Path}
+ * @param <U>
+ *            the type of the node of {@link Path}
+ */
 public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 	
 	private final Set<U> goal;
@@ -23,15 +33,32 @@ public class BreadthFirstSearch<T extends Number & Comparable<T>, U> {
 		this.problem = problem;
 	}
 	
+	/**
+	 * search with breadth first search algorithm according to the given
+	 * problem.
+	 * 
+	 * @return the first found path, that fulfills the problem requirements or
+	 *         <code>null</code>, if no path is found.
+	 */
 	public Path<T, U> search() {
 		return search(new NoStopCriteria<T, U>());
 	}
 
+	/**
+	 * a special case of {@link BreadthFirstSearch#search()}
+	 * 
+	 * @param stopCriteria
+	 *            {@link StopCriteria}
+	 * @return the first found path, that fulfills the problem requirements or
+	 *         <code>null</code>, if no path is found or the given stopCriteria
+	 *         matches.
+	 * @see BreadthFirstSearch#search()
+	 */
 	public Path<T, U> search(StopCriteria<T, U> stopCriteria) {
 		stopCriteria.init();
 		
 		while (true) {
-			if (stopCriteria.isStop() || isFrontierEmpty()) {
+			if (isFrontierEmpty() || stopCriteria.isStop()) {
 				break;
 			}
 			Path<T, U> path = removeChoice();

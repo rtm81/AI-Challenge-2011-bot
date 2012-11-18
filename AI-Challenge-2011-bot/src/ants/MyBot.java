@@ -16,7 +16,7 @@ import strategie.Fight;
 import strategie.Smell;
 
 
-public class MyBot extends Bot {
+public class MyBot implements Bot {
 
 
 	/**
@@ -29,18 +29,21 @@ public class MyBot extends Bot {
 	 *             if an I/O error occurs
 	 */
 	public static void main(String[] args) throws IOException {
-		new MyBot().readSystemInput();
+		MyBot myBot = new MyBot();
+		game = new Game(myBot);
+		game.readSystemInput();
 	}
 
 
 	Smell<Integer, Tile> smell = new Smell<Integer, Tile>(
 			new IntPathBuilder<Tile>());
 	private int round = 0;
+	private static Game game;
 
 	@Override
 	public void doTurn() {
 
-		Ants ants = getAnts();
+		Ants ants = game.getAnts();
 		GetNextOnPath<Integer, Tile, Aim> getNextOnPath = new DirectionEnd<Integer, Tile, Aim>(
 					new GetNextOnPathProblemAdapter(ants));
 		round++;

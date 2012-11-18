@@ -10,7 +10,8 @@ package search.path;
  * @param <T>
  *            the type of the length. Extends Number & Comparable<? super T>
  * @param <U>
- *            the type of any node.
+ *            the type of the node. (should implement
+ *            {@link Object#equals(Object)} and {@link Object#hashCode()})
  */
 public interface Path<T extends Number & Comparable<? super T>, U> extends
 		Comparable<Path<T, U>> {
